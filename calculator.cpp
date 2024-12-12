@@ -50,8 +50,19 @@ int operation(int a, int b, char op){
 int evaluate(string expression){
     stack<int> values;
     stack<char> operators;
-    for (int i = 0; i < expr.length(); i++) {
-        if (expr[i] == ' ')
+    for (int i = 0; i < expression.length(); i++) {
+        if (expression[i] == ' ')
             continue;
     }
+    if (isdigit(expression[i])) {
+        // Parses digit and adds to values stack
+            int num = 0;
+            while (i < expression.length() && isdigit(expression[i])) {
+                // Shifts the digits one to the left and adds to rightmost index
+                num = num * 10 + (int)(expression[i] - '0');
+                i++;
+            }
+            i--;
+            values.push(num);
+        }
 }
