@@ -3,6 +3,8 @@
 #include <string>
 #include <cmath>
 
+using namespace std;
+
 // defines order of operations
 int precedence(char op) {
     switch (op) {
@@ -116,4 +118,20 @@ int evaluate(string expression){
     }
 
     return values.top();
+}
+
+// Input handling  
+int main() {
+    string expr;
+    cout << "Enter an arithmetic expression: ";
+    getline(cin, expr);
+
+    try {
+        cout << "Result: " << evaluate(expr) << endl;
+    } catch (const runtime_error& e) {
+        // error handling
+        cerr << "Error: " << e.what() << endl;
+    }
+
+    return 0;
 }
