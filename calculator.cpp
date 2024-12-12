@@ -15,7 +15,7 @@ int precedence(char op) {
         case '/':
         case '%':
             return 2;
-        case '**':
+        case '^':
             return 3;
     }
     return -1;
@@ -42,8 +42,7 @@ int operation(int a, int b, char op){
                 throw runtime_error("Modulo by zero");
             }
             return a % b;
-
-        case '**':
+        case '^':
             return pow(a, b);
     }
     // or zero if incorrect operator
@@ -53,45 +52,46 @@ int operation(int a, int b, char op){
 int evaluate(string expression){
     stack<int> values;
     stack<char> operators;
-    // Evaluates Blank Space
-    for (int i = 0; i < expression.length(); i++) {
-        if (expression[i] == ' ')
+    int i = 0;  // Start index for parsing
+    // Evaluates the expression
+    while (i < expression.length()) {
+        if (expression[i] == ' ') {
+            // skips the spaces in the expression
+            i++;
             continue;
-    }
-    // Evaluates Digits
-    if (isdigit(expression[i])) {
-        // Parses digit and adds to values stack
+        }
+        
+        // Evaluates Digits
+        if (isdigit(expression[i])) {
             int num = 0;
             while (i < expression.length() && isdigit(expression[i])) {
-                // Shifts the digits one to the left and adds to rightmost index
                 num = num * 10 + (int)(expression[i] - '0');
                 i++;
             }
-            i--;
             values.push(num);
         } 
-    }
-    // Evaluates Parenthesis
-    else if (expression[i] == '(') {
-        // simply adds to operators list
+        // Evaluates Parenthesis
+        else if (expression[i] == '(') {
             operators.push(expression[i]);
-    }
-    else if (expression[i] == ')') {
-        while (!operators.empty() && operators.top() != '(') {
-            // If closes out a left parenthesis with operators/digits inside of it:
-            // Solves equation
-            int val2 = values.top();
-            values.pop();
-            int val1 = values.top();
-            values.pop();
-            char op = operators.top();
-            operators.pop();
-            values.push(operation(val1, val2, op));
+            i++;
         }
-        operators.pop();
-    }
-    else {
-        // Evaluates high precedence operators first (%,/,x)
+        else if (expression[i] == ')') {
+            while (!operators.empty() && operators.top() != '(') {
+                // If closes out a left parenthesis with operators/digits inside of it:
+                // Solves equation
+                int val2 = values.top();
+                values.pop();
+                int val1 = values.top();
+                values.pop();
+                char op = operators.top();
+                operators.pop();
+                values.push(operation(val1, val2, op));
+            }
+            operators.pop();
+            i++;
+        }
+        else {
+            // Evaluates high precedence operators first (%,/,x)
             while (!operators.empty() && precedence(expression[i]) <= precedence(operators.top())) {
                 // Solves equation
                 int val2 = values.top();
@@ -103,6 +103,7 @@ int evaluate(string expression){
                 values.push(operation(val1, val2, op));
             }
             operators.push(expression[i]);
+            i++;
         }
     }
 
