@@ -70,19 +70,23 @@ float evaluate(string expression)
             i++;
             continue;
         }
-        if (expression[i] == '-' && (i == 0 || expression[i - 1] == '(' || operators.empty() || precedence(operators.top()) >= 1)) {
+        if (expression[i] == '-' && (i == 0 || expression[i - 1] == '(' || operators.empty() || precedence(operators.top()) >= 1))
+        {
             isNegative = true;
             i++;
             continue;
         }
         // Evaluates Digits
-        if (isdigit(expression[i])) {
+        if (isdigit(expression[i]))
+        {
             int num = 0;
-            while (i < expression.length() && isdigit(expression[i])) {
+            while (i < expression.length() && isdigit(expression[i]))
+            {
                 num = num * 10 + (expression[i] - '0');
                 i++;
             }
-            if (isNegative) {
+            if (isNegative)
+            {
                 num = -num;
                 isNegative = false; // Reset the flag
             }
@@ -133,6 +137,10 @@ float evaluate(string expression)
     // Evaluates the rest of the operators
     while (!operators.empty())
     {
+        if (values.size() < 2)
+        {
+            throw runtime_error("Malformed expression: insufficient values.");
+        }
         float val2 = values.top();
         values.pop();
         float val1 = values.top();
@@ -142,6 +150,11 @@ float evaluate(string expression)
         values.push(operation(val1, val2, op));
     }
 
+    if (values.size() < 2)
+    {
+        throw runtime_error("Malformed expression: insufficient values.");
+    }
+    
     return values.top();
 }
 
@@ -156,7 +169,8 @@ int main()
 
         try
         {
-            cout << "Result: " << evaluate(expr) << endl;
+            float result = evaluate(expr);
+            cout << "Result: " << result << endl;
         }
         catch (const runtime_error &e)
         {
