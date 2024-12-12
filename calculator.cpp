@@ -3,25 +3,17 @@
 #include <string>
 #include <cmath>
 
-// defines order for operations
+// defines order of operations
 int precedence(char op) {
     switch (op) {
-        // higher number for higher precedence
         case '+':
         case '-':
             return 1;
         case '*':
         case '/':
-            if (b == 0) {
-                throw runtime_error("Division by zero");
-            }
-            return a / b;
         case '%':
-            if (b == 0) {
-                throw runtime_error("Modulo by zero");
-            }
-            return a % b;
-        case '^':
+            return 2;
+        case '**':
             return 3;
     }
     return -1;
@@ -37,9 +29,18 @@ int operation(int a, int b, char op){
         case '*':
             return a * b;
         case '/':
+            if (b == 0) {
+                // does not allow divide by zero
+                throw runtime_error("Division by zero");
+            }
             return a / b;
         case '%':
+            if (b == 0) {
+                // does not allow modulo by zero
+                throw runtime_error("Modulo by zero");
+            }
             return a % b;
+
         case '**':
             return pow(a, b);
     }
@@ -50,10 +51,12 @@ int operation(int a, int b, char op){
 int evaluate(string expression){
     stack<int> values;
     stack<char> operators;
+    // Evaluates Blank Space
     for (int i = 0; i < expression.length(); i++) {
         if (expression[i] == ' ')
             continue;
     }
+    // Evaluates Digits
     if (isdigit(expression[i])) {
         // Parses digit and adds to values stack
             int num = 0;
@@ -64,5 +67,25 @@ int evaluate(string expression){
             }
             i--;
             values.push(num);
+        } 
+    }
+    // Evaluates Parenthesis
+    else if (expression[i] == '(') {
+        // simply adds to operators list
+            operators.push(expression[i]);
+    }
+    else if (expression[i] == ')') {
+        while (!operators.empty() && operators.top() != '(') {
+            // If closes out a left parenthesis with operators/digits inside of it:
+            // Reorganizes the values and operators to evaluate first
+            int val2 = values.top();
+            values.pop();
+            int val1 = values.top();
+            values.pop();
+            char op = operators.top();
+            operators.pop();
+            values.push(operation(val1, val2, op));
         }
+        operators.pop();
+    }
 }
