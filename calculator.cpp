@@ -77,7 +77,7 @@ int evaluate(string expression){
     else if (expression[i] == ')') {
         while (!operators.empty() && operators.top() != '(') {
             // If closes out a left parenthesis with operators/digits inside of it:
-            // Reorganizes the values and operators to evaluate first
+            // Solves equation
             int val2 = values.top();
             values.pop();
             int val1 = values.top();
@@ -87,5 +87,20 @@ int evaluate(string expression){
             values.push(operation(val1, val2, op));
         }
         operators.pop();
+    }
+    else {
+        // Evaluates high precedence operators first (%,/,x)
+            while (!operators.empty() && precedence(expression[i]) <= precedence(operators.top())) {
+                // Solves equation
+                int val2 = values.top();
+                values.pop();
+                int val1 = values.top();
+                values.pop();
+                char op = operators.top();
+                operators.pop();
+                values.push(operation(val1, val2, op));
+            }
+            ops.push(expr[i]);
+        }
     }
 }
