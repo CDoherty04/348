@@ -100,7 +100,20 @@ int evaluate(string expression){
                 operators.pop();
                 values.push(operation(val1, val2, op));
             }
-            ops.push(expr[i]);
+            operators.push(expression[i]);
         }
     }
+
+    // Evaluates the rest of the operators
+    while (!operators.empty()) {
+        int val2 = values.top();
+        values.pop();
+        int val1 = values.top();
+        values.pop();
+        char op = operators.top();
+        operators.pop();
+        values.push(operation(val1, val2, op));
+    }
+
+    return values.top();
 }
