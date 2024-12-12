@@ -60,6 +60,7 @@ float evaluate(string expression)
     stack<float> values;
     stack<char> operators;
     int i = 0; // Start index for parsing
+    bool isNegative = false;
     // Evaluates the expression
     while (i < expression.length())
     {
@@ -69,15 +70,21 @@ float evaluate(string expression)
             i++;
             continue;
         }
-
+        if (expression[i] == '-' && (i == 0 || expression[i - 1] == '(' || operators.empty() || precedence(operators.top()) >= 1)) {
+            isNegative = true;
+            i++;
+            continue;
+        }
         // Evaluates Digits
-        if (isdigit(expression[i]))
-        {
-            float num = 0;
-            while (i < expression.length() && isdigit(expression[i]))
-            {
-                num = num * 10 + (float)(expression[i] - '0');
+        if (isdigit(expression[i])) {
+            int num = 0;
+            while (i < expression.length() && isdigit(expression[i])) {
+                num = num * 10 + (expression[i] - '0');
                 i++;
+            }
+            if (isNegative) {
+                num = -num;
+                isNegative = false; // Reset the flag
             }
             values.push(num);
         }
